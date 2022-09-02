@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/shipsgold/open-rpc-near-transport/compare/1.0.1...1.0.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* base_url and ev source ([aae8b4d](https://github.com/shipsgold/open-rpc-near-transport/commit/aae8b4d8478a256830c44e740b72dbd7a3c6b5c0))
+
 ## [1.0.1](https://github.com/shipsgold/open-rpc-near-transport/compare/1.0.0...1.0.1) (2022-09-02)
 
 

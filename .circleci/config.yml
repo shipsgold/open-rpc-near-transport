@@ -17,7 +17,7 @@ aliases:
   # -------------------------
   - &filter-only-master
     branches:
-      only: master
+      only: main
   - &filter-only-semantic-pr
     branches:
       only:  /^(pull|fix|feat|dependabot)\/.*$/

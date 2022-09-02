@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/shipsgold/open-rpc-near-transport/compare/1.0.2...1.0.3) (2022-09-02)
+
+
+### Bug Fixes
+
+* wip restore routing ([b2ac2b3](https://github.com/shipsgold/open-rpc-near-transport/commit/b2ac2b3999ed58bd91091d057963779249af1b42))
+
 ## [1.0.2](https://github.com/shipsgold/open-rpc-near-transport/compare/1.0.1...1.0.2) (2022-09-02)
 
 

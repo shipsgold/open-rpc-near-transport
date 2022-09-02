@@ -10,7 +10,7 @@ aliases:
   - &save-deps-cache
     key: deps-cache-{{ checksum "package.json" }}
     paths:
-      - ~/project/node_modules
+      - ~/open-rpc-near-transport/node_modules
 
   # -------------------------
   #  ALIASES: Branch Filters
@@ -23,7 +23,7 @@ aliases:
       only:  /^(pull|fix|feat|dependabot)\/.*$/
 
 defaults: &defaults
-  working_directory: ~/project
+  working_directory: ~/open-rpc-near-transport
 
 jobs:
   test:

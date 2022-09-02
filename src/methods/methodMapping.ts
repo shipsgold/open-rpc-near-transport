@@ -15,9 +15,9 @@ let transportWindow: Window;
 const connect: Connect = async (uri: any) => {
   console.log("transport");
   transport = new NearWebTransport(uri);
-  console.log("connecting")
+  console.log(`connecting ${transport.contractId}`)
   transportWindow = await transport.connect();
-  console.log("connected")
+  console.log(`connected ${transport.contractId}`)
   return true;
 };
 

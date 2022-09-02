@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getWallet, walletSignIn } from "./near";
+import { getEnvironment, getWallet, walletSignIn } from "./near";
 
 export interface ShouldOpenWindow {
   (): Promise<boolean>;
@@ -14,6 +14,7 @@ export interface CheckMessage {
 export interface Req {
   method: string;
   params: any | any[];
+  contractId: string;
   total: number;
   count: number;
 }
@@ -24,9 +25,10 @@ export const closeSigningWindow = ():void => {
   prevWindow = null;
 }
 
-export const walletAuth = async () => {
-  const wallet = await getWallet("testnet")     
-  const accountId = await walletSignIn(wallet,"mkt.landofswapps.testnet", "mkt.landofswapps.testnet")
+export const walletAuth = async (contractId: string) => {
+  const env = getEnvironment(contractId)
+  const wallet = await getWallet(env)     
+  const accountId = await walletSignIn(wallet,contractId,contractId)
 }
 
 export const createSigningWindowFunc = async (
@@ -47,6 +49,8 @@ export const createSigningWindowFunc = async (
           const message = JSON.parse(event.data);
           checkMessage(message);
           if (message.success !== undefined) {
+            prevWindow?.close();
+            prevWindow = null;
             window.removeEventListener('message',listener);
             resolve(message);
           }

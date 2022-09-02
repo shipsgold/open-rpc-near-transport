@@ -4,7 +4,8 @@ import {useLocation } from "react-router-dom";
 import qs from "qs";
 import styled from "styled-components"
 import BN from "bn.js"
-import { getWallet, walletSignIn } from "../lib/near";
+import { getEnvironment, getWallet, walletSignIn } from "../lib/near";
+import { Environments } from "../transports/connection";
 // import {depositStorage, nftApprove, nftList, nftOffer, removeSale} from "../api/swap";
 
 
@@ -30,6 +31,7 @@ interface CallbackStatus {
 interface RequestData {
   method: string
   params: any[] 
+  contractId: string
   // Total out of sequence
   total: number
   count: number
@@ -57,22 +59,25 @@ interface Method {
   desc: string
 }
 
-const makeSignedIn = async (): Promise<boolean>=> {
+const makeSignedIn = async (contractId: string): Promise<boolean>=> {
   let retries = 5;
   let signedIn = false;
   while(retries-- && !signedIn){
+    const env = getEnvironment(contractId)
     // eslint-disable-next-line no-await-in-loop
-    const wallet = await getWallet("testnet")
+    const wallet = await getWallet(env,contractId)
     // 
     // eslint-disable-next-line no-debugger
     signedIn = wallet.isSignedIn()
   }
   return signedIn || retries > 0 
 }
-const launchWallet = async () => {
-  console.log("wecalled it ")
-  const initWallet = await getWallet("testnet")     
-  const accountId = await walletSignIn(initWallet,"mkt.landofswapps.testnet", "mkt.landofswapps.testnet")
+const launchWallet = async (contractId: string) => {
+   
+  const env = getEnvironment(contractId)
+  // eslint-disable-next-line no-await-in-loop
+  const wallet = await getWallet(env,contractId)
+  const accountId = await walletSignIn(wallet,contractId, contractId)
 }
 const methods: {[k: string]: Method}= {
   "__walletAuth": {method: launchWallet, desc: "Authorize contract"}
@@ -98,20 +103,23 @@ const MessageContainer = styled.div`
   align-self: center;
 `
 
-const genericSigner= async (method:string, params: any) => {
+const genericSigner= async (method:string, params: any, contractId: string) => {
 
-  const wallet = await getWallet("testnet")
+  const env = getEnvironment(contractId)
+  // eslint-disable-next-line no-await-in-loop
+  const wallet = await getWallet(env)
   const copyParams = {...params}
   
   // eslint-disable-next-line no-param-reassign
   delete params.attachedDeposit;
   // eslint-disable-next-line no-param-reassign
   delete params.gas;
+  // eslint-disable-next-line no-param-reassign
 
   const attachedDeposit = copyParams.attachedDeposit || "0" 
   const gas = copyParams.gas || "3000000" 
   await wallet.account().functionCall({args:params,
-    contractId: "mkt.landofswapps.testnet",
+    contractId,
     methodName: method,
     attachedDeposit: new BN(attachedDeposit),
     gas: new BN(gas)
@@ -123,6 +131,7 @@ const WalletRequest: React.FunctionComponent = () => {
 
   const [method, setMethod] = useState<Method>();
   const [methodName, setMethodName] = useState<string>("");
+  const [contractId, setContractId] = useState<string>("");
   const [params, setParams] = useState<any[]>();
   const [count, setCount] = useState<number>();
   const [total, setTotal] = useState<number>();
@@ -142,6 +151,7 @@ const WalletRequest: React.FunctionComponent = () => {
               console.log(`listening from wallet window ${JSON.stringify(message)}`)
               setParams(message.params)
               setMethod(mthd)
+              setContractId(message.contractId)
               setMethodName(message.method);
               setCount(message.count)
               setTotal(message.total)
@@ -163,12 +173,12 @@ const WalletRequest: React.FunctionComponent = () => {
     async function callMethod(){
       if(count && total && method && params) {
         setTimeout(async ()=>{
-          alert('launched')
           let res
           if((params as any).attachedDeposit || (params as any).gas){
-            res = await genericSigner(methodName,params)
+            res = await genericSigner(methodName,params, contractId)
           } else{
-            res = await method.method(...params as any)
+            // TODO call walletAuth directly
+            res = await method.method(contractId)
           }
 
           setResult(res);
@@ -195,7 +205,7 @@ const WalletRequest: React.FunctionComponent = () => {
       }
 
       if(window.opener !== window && window.opener !== null && parsedUrl.public_key){
-        const res = await makeSignedIn()
+        const res = await makeSignedIn(contractId)
         if(res){
           const successMessage = JSON.stringify({success: parsedUrl.public_key, value: res})
           window.opener.postMessage(successMessage, config.frontendURI)
@@ -211,7 +221,7 @@ const WalletRequest: React.FunctionComponent = () => {
       }
     }
     verifyTxOrAuthorization()
-  }, [location.search, result, setTxHash, txHash])
+  }, [location.search, result, setTxHash, txHash, contractId])
   return (<MessageContainer>
     {method && <Message>Loading wallet 
       to sign transaction {count} of {total} for {method && method.desc}</Message>}

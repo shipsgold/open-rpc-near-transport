@@ -29,7 +29,6 @@ async function messageHandler(ev: MessageEvent){
   if (!methodMapping[ev.data.method]) {
     console.log(ev.data)
     // eslint-disable-next-line no-debugger
-    debugger
     window.parent.postMessage({
       jsonrpc: "2.0",
       error: {

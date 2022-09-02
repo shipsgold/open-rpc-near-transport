@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/shipsgold/open-rpc-near-transport/compare/1.0.0...1.0.1) (2022-09-02)
+
+
+### Bug Fixes
+
+* 404 fix directory ([03f70ba](https://github.com/shipsgold/open-rpc-near-transport/commit/03f70ba00ec2561a8925901160227dc5cbee9ee8))
+* 404 for index.html ([76c4d1b](https://github.com/shipsgold/open-rpc-near-transport/commit/76c4d1b87376fc1d256189119a197ead74265cf1))
+
 # 1.0.0 (2022-09-02)
 
 

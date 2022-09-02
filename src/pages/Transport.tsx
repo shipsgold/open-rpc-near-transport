@@ -1,9 +1,6 @@
 import React, { useEffect } from "react"
 import openrpcDocument from "../openrpc.json";
 import methodMapping from "../methods/methodMapping";
-/* import config from "../config";
-import { walletSignIn } from "../api/near";
-*/
 
 
 
@@ -24,7 +21,7 @@ async function messageHandler(ev: MessageEvent){
 
   if (!methodMapping[ev.data.method]) {
     // eslint-disable-next-line no-debugger
-    window.parent.postMessage({
+    (ev.source as WindowProxy).postMessage({
       jsonrpc: "2.0",
       error: {
         code: 32009,
@@ -37,7 +34,7 @@ async function messageHandler(ev: MessageEvent){
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   methodMapping[ev.data.method](...ev.data.params).then((results: any) => {
-    window.parent.postMessage({
+    (ev.source as WindowProxy).postMessage({
       jsonrpc: "2.0",
       result: results,
       id: ev.data.id,

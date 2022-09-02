@@ -36,6 +36,7 @@ module.exports = {
     'no-use-before-define': 'off',
     "class-methods-use-this": 'off',
     "indent": ["error", 2],
+    "no-console": ["error", { allow: ["warn", "error", "info"] }],
     '@typescript-eslint/no-unused-vars': "warn",
     'no-shadow': "off",
     '@typescript-eslint/no-use-before-define': ["warn"],

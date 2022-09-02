@@ -1,12 +1,12 @@
 {
   "tagFormat": "${version}",
-  "branch": "master",
+  "branch": "main",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     "@semantic-release/github",
-    "@semantic-release/git",
+    "@semantic-release/git"
   ],
   "verifyConditions": [
     "@semantic-release/changelog",

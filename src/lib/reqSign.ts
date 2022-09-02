@@ -25,25 +25,24 @@ export const closeSigningWindow = ():void => {
   prevWindow = null;
 }
 
-export const walletAuth = async (contractId: string) => {
+export const walletAuth = async (contractId: string):Promise<void> => {
   const env = getEnvironment(contractId)
   const wallet = await getWallet(env)     
-  const accountId = await walletSignIn(wallet,contractId,contractId)
+  await walletSignIn(wallet,contractId,contractId)
 }
 
 export const createSigningWindowFunc = async (
   req: Req,
   // TODO something more rigorous for validity
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parentPath: string,
-  checkMessage: CheckMessage = (m: string) => "",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  checkMessage: CheckMessage = (_m: string) => "",
   shouldOpenWindow: ShouldOpenWindow = async () => true
 ): Promise<any> => {
   let w: Window | null;
   const prom: Promise<any> = new Promise((resolve, reject) => {
     const listener = (event: any) => {
       
-      console.log(`the parent path  ${parentPath}, origin: ${origin} event:${JSON.stringify(event)}`)
       if (event.origin === parentPath) {
         try {
           const message = JSON.parse(event.data);

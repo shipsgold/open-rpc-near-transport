@@ -5,8 +5,6 @@ import qs from "qs";
 import styled from "styled-components"
 import BN from "bn.js"
 import { getEnvironment, getWallet, walletSignIn } from "../lib/near";
-import { Environments } from "../transports/connection";
-// import {depositStorage, nftApprove, nftList, nftOffer, removeSale} from "../api/swap";
 
 
 export const WALLET_AUTH_METHOD = "__walletAuth"
@@ -37,22 +35,6 @@ interface RequestData {
   count: number
 }
 
-/*
-useEffect(() => {
-  // eslint-disable-next-line camelcase
-  const { account_id, failure } = qs.parse(location.search, { ignoreQueryPrefix: true })
-  if(failure){
-    const failureMsg = JSON.stringify({failure})
-    window.opener.postMessage(failureMsg, config.frontendURI)
-  }
-  // eslint-disable-next-line camelcase
-  if(window.opener !== window && window.opener !== null && account_id !== "" && account_id){
-    const accountMessage = JSON.stringify({account_id})
-    window.opener.postMessage(accountMessage, config.frontendURI)
-  }
-}, [location, history])
-*/
-
 // TODO fix typings
 interface Method {
   method: (...x: any)=> any
@@ -77,16 +59,10 @@ const launchWallet = async (contractId: string) => {
   const env = getEnvironment(contractId)
   // eslint-disable-next-line no-await-in-loop
   const wallet = await getWallet(env,contractId)
-  const accountId = await walletSignIn(wallet,contractId, contractId)
+  return walletSignIn(wallet,contractId, contractId)
 }
 const methods: {[k: string]: Method}= {
   "__walletAuth": {method: launchWallet, desc: "Authorize contract"}
-/*  "depositStorage": { method: depositStorage, desc: "marketplace storage deposit"},
-  "nftApprove": {method: nftApprove, desc: "nft token approval"},
-  "nftList": {method: nftList, desc:"listing the token for sale"},
-  "nftOffer": {method: nftOffer, desc: "accepting the swap offer"},
-  "removeSale": {method: removeSale, desc: "removing the listing"}
-  */
 }
 
 
@@ -148,7 +124,6 @@ const WalletRequest: React.FunctionComponent = () => {
             const message: RequestData = JSON.parse(event.data)
             if(message.method){
               const mthd = methods[message.method] ? methods[message.method] : {method: ()=>true, desc:""};
-              console.log(`listening from wallet window ${JSON.stringify(message)}`)
               setParams(message.params)
               setMethod(mthd)
               setContractId(message.contractId)

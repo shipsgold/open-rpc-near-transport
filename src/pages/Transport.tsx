@@ -1,7 +1,4 @@
 import React, { useEffect } from "react"
-import { useLocation } from "react-router-dom";
-import qs from "qs";
-import { getWallet, walletSignIn } from "../lib/near";
 import openrpcDocument from "../openrpc.json";
 import methodMapping from "../methods/methodMapping";
 /* import config from "../config";
@@ -15,7 +12,6 @@ async function messageHandler(ev: MessageEvent){
   console.log("origin", ev.origin);
   // eslint-disable-next-line no-console
   console.log("data", ev.data.error); 
-  if(ev.data) console.log("ev.data.method",ev.data.method)
   if (ev.data.method === "rpc.discover") {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ev.source as any).postMessage({
@@ -27,7 +23,6 @@ async function messageHandler(ev: MessageEvent){
   }
 
   if (!methodMapping[ev.data.method]) {
-    console.log(ev.data)
     // eslint-disable-next-line no-debugger
     window.parent.postMessage({
       jsonrpc: "2.0",

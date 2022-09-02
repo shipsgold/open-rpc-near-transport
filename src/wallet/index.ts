@@ -9,8 +9,6 @@ import { FinalExecutionOutcome } from "near-api-js/lib/providers";
 import { SignAndSendTransactionOptions } from "near-api-js/lib/account";
 
 const LOGIN_WALLET_URL_SUFFIX = '/login/';
-const MULTISIG_HAS_METHOD = 'add_request_and_confirm';
-const LOCAL_STORAGE_KEY_SUFFIX = '_wallet_auth_key';
 const PENDING_ACCESS_KEY_PREFIX = 'pending_key'; // browser storage key for a pending access key (i.e. key has been generated but we are not sure it was added yet)
 
 interface RequestSignTransactionsOptions {
@@ -81,7 +79,7 @@ export class PostWalletConnection extends WalletConnection {
     return newUrl.toString();
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async requestSignTransactions(...args: any[]):Promise<any> {
     if(Array.isArray(args[0])) {
       return this.__requestSignTransactions({
@@ -99,6 +97,7 @@ export class PostWalletConnection extends WalletConnection {
     const newUrl = new URL('sign', this._walletBaseUrl);
 
     newUrl.searchParams.set('transactions', transactions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((transaction: any) => serialize(SCHEMA, transaction))
       .map((serialized: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>) => Buffer.from(serialized).toString('base64'))
       .join(','));
@@ -116,6 +115,7 @@ export class PostConnectedWalletAccount extends ConnectedWalletAccount {
     super(walletConnection, connection, accountId)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected signAndSendTransaction(...args: any[]): Promise<FinalExecutionOutcome> {
     if(typeof args[0] === 'string') {
       return this.__signAndSendTransaction({ receiverId: args[0], actions: args[1] });
@@ -134,7 +134,8 @@ export class PostConnectedWalletAccount extends ConnectedWalletAccount {
     if (localKey && localKey.toString() === accessKey.public_key) {
       try {
         return await super.signAndSendTransaction({ receiverId, actions });
-      } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
         if (e.type === 'NotEnoughBalance') {
           accessKey = await this.accessKeyForTransaction(receiverId, actions);
         } else {

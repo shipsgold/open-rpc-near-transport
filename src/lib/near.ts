@@ -1,5 +1,4 @@
 import { connect, keyStores, Near, WalletConnection } from "near-api-js";
-import { BrowserLocalStorageKeyStore } from "near-api-js/lib/key_stores";
 import { Environments, getConnectionConfig } from "../transports/connection";
 
 export async function getConnection(

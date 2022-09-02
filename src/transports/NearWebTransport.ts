@@ -36,11 +36,13 @@ class NearWebTransport extends Transport {
   
 
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async connect(): Promise<any> {
 
 
     if(!isValidContractId(this.contractId)) return
     const url = new URL(window.location.origin)
+    // eslint-disable-next-line no-alert
     if (!url.origin) alert("No origin host")
     console.log(`creating window with this path ${url.origin}`)
     const env = getEnvironment(this.contractId)
@@ -79,6 +81,7 @@ class NearWebTransport extends Transport {
     }
 
     const url = new URL(window.location.origin)
+    // eslint-disable-next-line no-alert
     if (!url.origin) alert("No origin host")
     if(req.method === "rpc.discover"){
       const httpTransport = new HTTPTransport(config.nodeUrl)
@@ -88,7 +91,8 @@ class NearWebTransport extends Transport {
       if(!reqResult.result) return reqResult
       return Object.assign(reqResult,{result: JSON.parse(Buffer.from(reqResult.result).toString())}) 
     }
-    const {gas, attachedDeposit} = req.params as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const {gas, attachedDeposit} = req.params as any
     if(gas || attachedDeposit) {
       console.log(req.params)
 
